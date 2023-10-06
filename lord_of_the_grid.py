@@ -240,11 +240,15 @@ def game_result(player_names):
         for item in row:
             if item == player_names[0]:
                 player[0] += 1
+                total += 1
             elif item == player_names[1]:
                 player[1] += 1
-            total += 1
+                total += 1
+    if player[0] != player[1]:
+        str_1 = "\n" + "*" * 14 + f"\nPlayer {player.index(max(player)) + 1} wins!" + "\n" + "*" * 14
+    else:
+        str_1 = "\n" + "*" * 11 + "\nIt's a tie!" + "\n" + "*" * 11
 
-    str_1 = "\n" + "*" * 14 + f"\nPlayer {player.index(max(player)) + 1} wins!" + "\n" + "*" * 14
     str_2 = "\n\n" + "=" * 12 + "\n" + f"Game Scores:\n" + "=" * 12
     str_3 = f"\n\nPlayer 1: {player[0]}/{total} blocks owned.\n\n"
     str_4 = f"Player 2: {player[1]}/{total} blocks owned.\n"
