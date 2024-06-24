@@ -83,7 +83,7 @@ Deals with input validation and processing.
 
 ### `lord-of-the-grid/utils.py`
 
-Contains utility functions, such as printing the grid and checking if the game has ended.
+Contains utility functions, such as calculating scores and checking if the game has ended.
 
 ## Running Tests
 
@@ -109,4 +109,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Enjoy playing Dots and Boxes! If you encounter any issues or have suggestions, feel free to open an issue on GitHub.
+Enjoy playing Lord of the Grid! If you encounter any issues or have suggestions, feel free to open an issue on GitLab.
