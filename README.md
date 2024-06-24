@@ -1,6 +1,6 @@
 # Lord of the Grid
 
-A command-line implementation of a Dots and Boxes game. The game allows two players to take turns adding lines between dots on a grid. When a player completes a box, they earn a point and get another turn, and the box is 'signed' with their initial. The game ends when no more lines can be added, and the player with the most points wins.
+A command-line implementation of the classic Dots and Boxes game. The game allows two players to take turns adding lines between dots on a grid. When a player completes a box, they earn a point and get another turn, and the box is 'signed' with their initial. The game ends when no more lines can be added, and the player with the most points wins.
 
 ## Table of Contents
 
@@ -38,7 +38,7 @@ python main.py
 ## Game Rules
 
 1. Players take turns to add a single horizontal or vertical line between two unjoined adjacent dots.
-2. A player who completes the fourth side of a 1x1 box earns one point and takes another turn.
+2. A player who completes the fourth side of a 1x1 box earns one point, signs the block, and takes another turn.
 3. The game ends when no more lines can be added.
 4. The player with the most points at the end of the game wins.
 

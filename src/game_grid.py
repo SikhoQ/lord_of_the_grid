@@ -32,10 +32,8 @@ class Grid:
 
     def update_grid(self, play):
         row_1, col_1, row_2, col_2 = self.get_coordinates(play)
-
         if row_1 == row_2:  # horizontal play
             self.grid[row_1][min([col_1, col_2]) + 1] = "-"  # find space to replace by adding 1 to the smaller column
-
             if col_1 > col_2:  # play direction : RIGHT
                 self.direction = "LEFT"
             else:
@@ -49,10 +47,10 @@ class Grid:
                 self.direction = "DOWN"
 
     def do_block_sign(self, player):
-        self.grid[self.sign_block[0]][self.sign_block[1]] = player  # just put the player's initial in the completed block
+        self.grid[self.sign_block[0]][self.sign_block[1]] = player.name  # just put the player's initial in the completed block
 
         if len(self.sign_block) == 4:
-            self.grid[self.sign_block[2]][self.sign_block[3]] = player  # sign_block has length 4 when single play completes 2 blocks, in which case sign both blocks
+            self.grid[self.sign_block[2]][self.sign_block[3]] = player.name  # sign_block has length 4 when single play completes 2 blocks, in which case sign both blocks
 
     def check_block_completed(self, play):
         row_1, col_1, row_2, col_2 = self.get_coordinates(play)
@@ -165,3 +163,9 @@ class Grid:
             for item in this_line:
                 print(item, end=" "*2)
             print()
+
+    def draw(self, stdscr):
+        for i, row in enumerate(self.grid):
+            for j, cell in enumerate(row):
+                stdscr.addch(i, j * 2, cell)
+        stdscr.refresh()

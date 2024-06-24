@@ -4,8 +4,7 @@ from InquirerPy import inquirer
 class InputHandler:
     @staticmethod
     def get_grid_size():
-        return inquirer.select(
-                               message="Grid size:",
+        return inquirer.select(message="Grid size:",
                                choices=list(range(2, 10))).execute()
 
     @staticmethod

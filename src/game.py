@@ -1,8 +1,7 @@
 import os
-
 from input_handler import InputHandler
 from player import Player
-import utils
+import utils as utils
 from game_grid import Grid
 
 
@@ -40,7 +39,7 @@ def main():
 
             completed_block = grid.check_block_completed(current_play)  # to check if current play completed a block; if yes, call further functions from within
             if completed_block:
-                grid.do_block_sign(str(player.name))
+                grid.do_block_sign(player)
             else:
                 player = player2 if player == player1 else player1
         else:
