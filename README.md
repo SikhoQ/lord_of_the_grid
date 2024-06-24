@@ -1,4 +1,4 @@
-# Dots and Boxes
+# Lord of the Grid
 
 A command-line implementation of a Dots and Boxes game. The game allows two players to take turns adding lines between dots on a grid. When a player completes a box, they earn a point and get another turn, and the box is 'signed' with their initial. The game ends when no more lines can be added, and the player with the most points wins.
 
