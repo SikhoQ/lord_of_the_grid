@@ -150,7 +150,7 @@ class Grid:
 
     def print_grid(self):
         print("\n\n" + " "*7, end="")  # print spaces before the 1
-        for i in range(1, self.size + 1):  # printing column labels (1 to grid_size)
+        for i in range(1, self.size + 1):  # printing column labels
             print(i, end=" "*5)
 
         print("\n\n")
