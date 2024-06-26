@@ -1,13 +1,33 @@
 import string
+import curses
 
 
 class Grid:
-    def __init__(self, size):
+    def __init__(self, size, stdscr):
         self.size = size
         self.grid = self.create_grid()
         self.direction = ""
         self.alphas = string.ascii_uppercase
         self.sign_block = list()
+        self.stdscr = stdscr
+        self.screen_height, self.screen_width, \
+            self.grid_height, self.grid_width, \
+            self.start_row, self.start_col = self.get_dimensions()
+
+    def get_dimensions(self):
+        # Get screen size
+        screen_height, screen_width = self.stdscr.getmaxyx()
+
+        # Calculate grid dimensions
+        grid_height = len(self.grid)
+        grid_width = len(self.grid[0]) * 2  # Assuming each cell takes 2 columns (one for the cell and one for space)
+
+        # Calculate starting positions to center the grid
+        start_row = (screen_height - grid_height) // 2
+        start_col = (screen_width - grid_width) // 2
+
+        return screen_height, screen_width, grid_height, \
+            grid_width, start_row, start_col
 
     def create_grid(self):
         # 'dots' to be connected in grid are represented by +
@@ -164,8 +184,42 @@ class Grid:
                 print(item, end=" "*2)
             print()
 
-    def draw(self, stdscr):
+    def draw(self):
+        # Draw the grid
         for i, row in enumerate(self.grid):
             for j, cell in enumerate(row):
-                stdscr.addch(i, j * 2, cell)
-        stdscr.refresh()
+                self.stdscr.addch(self.start_row + i,
+                                  self.start_col + j * 2, cell)
+
+        # Calculate the position below the grid
+        cursor_row = self.start_row + self.grid_height + 1
+        cursor_col = self.start_col
+
+        self.stdscr.addstr(cursor_row, cursor_col, "Press 'q' to quit")
+
+        self.stdscr.refresh()
+
+    def get_mouse_coordinates(self):
+        id, x, y, z, bstate = curses.getmouse()
+        return y, x
+
+    def update_grid_with_click(self, click):
+        row, col = click
+
+        if col > 0 and col < (self.screen_width - 1) and\
+           row > 0 and row < (self.screen_height - 1):
+            left_char = self.stdscr.inch(row, col - 1) & 0xFF
+            right_char = self.stdscr.inch(row, col + 1) & 0xFF
+            mid_char1 = self.stdscr.inch(row, col) & 0xFF
+
+            if left_char == right_char == "+" and mid_char1 == " ":
+                self.stdscr.addstr(row, col, "-")
+
+            top_char = self.stdscr.inch(row - 1, col) & 0xFF
+            bottom_char = self.stdscr.inch(row + 1, col) & 0xFF
+            mid_char2 = self.stdscr.inch(row, col) & 0xFF
+
+            if top_char == bottom_char == "+" and mid_char2 == " ":
+                self.stdscr.addstr(row, col, "|")
+
+            self.stdscr.refresh()
