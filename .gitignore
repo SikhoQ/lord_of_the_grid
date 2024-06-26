@@ -1,3 +1,5 @@
 .venv/
 reminder.txt
 temp.py
+curses_simple_example.py
+curses_simple_example2.py
