@@ -27,7 +27,6 @@ import sys
 import string
 import colours
 
-
 game_over = False
 
 >>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
@@ -90,14 +89,15 @@ if __name__ == "__main__":
     # prompt grid size
     grid_size = game_grid.Grid.get_grid_size(stdscr)
 
-    alphas = string.ascii_lowercase
+    alphas = string.ascii_lowercase + string.ascii_uppercase
     # prompt player 1 initial
     player_1, alphas = player.Player.get_player_initial(stdscr, alphas)
     # prompt player 2 initial
     player_2, alphas = player.Player.get_player_initial(stdscr, alphas)
 
-    block_colors = {player_1: colours.Colours.BLACK_YELLOW,
-                    player_2: colours.Colours.WHITE_BLUE}
+    curses.noecho()
+
+    colours.Colours(player_1, player_2)
 
     current_player = player_1
     next_player = player_2
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     player_1_score = 0
     player_2_score = 0
 
-    utils.print_gameplay_details(stdscr, total_blocks, current_player, {player_1: player_1_score}, {player_2: player_2_score})
+    utils.print_score_card(stdscr, total_blocks, current_player, {player_1: player_1_score}, {player_2: player_2_score})
 
     while not game_over:  # until player(s) enter(s) q or game is over
         completed_block = False
@@ -142,25 +142,25 @@ if __name__ == "__main__":
                     utils.check_valid_vertical(stdscr, row, col)
 
                 if valid_horizontal:
-                    grid.connect_horizontal(stdscr, left_coord, right_coord)
+                    utils.connect_horizontal(stdscr, left_coord, right_coord)
                     mid_coord = (left_coord[0], left_coord[1] + 2)
                 elif valid_vertical:
-                    grid.connect_vertical(stdscr, row, col)
+                    utils.connect_vertical(stdscr, row, col)
                     mid_coord = (row, col)
 
                 if valid_horizontal or valid_vertical:
                     completed_block, sign_coords = grid.block_completed(
                         stdscr, mid_coord, valid_horizontal, valid_vertical)
                     if completed_block:
-                        grid.do_block_sign(stdscr, sign_coords, current_player, block_colors)
-                        game_over, player_1_score, player_2_score = utils.scores(stdscr, total_blocks, player_1, player_2)
+                        utils.do_block_sign(stdscr, sign_coords, current_player)
+                        game_over, player_1_score, player_2_score = utils.calculate_scores(stdscr, total_blocks, player_1, player_2)
                 ###############################################
                 stdscr.addstr(0, 0, str(completed_block) + " ")
                 ###############################################
                 if not completed_block and (valid_horizontal or valid_vertical):
                     current_player, next_player = next_player, current_player
 
-        utils.print_gameplay_details(stdscr, total_blocks, current_player, {player_1: player_1_score}, {player_2: player_2_score})
+        utils.print_score_card(stdscr, total_blocks, current_player, {player_1: player_1_score}, {player_2: player_2_score})
 
         stdscr.refresh()
     # play_game(stdscr)

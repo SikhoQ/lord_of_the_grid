@@ -1,5 +1,6 @@
 import string
 import curses
+import colours
 
 
 class Grid:
@@ -48,16 +49,6 @@ class Grid:
                 grid[-1].pop()  # remove last spaces in each list (useless)
 
         return grid
-
-    def do_block_sign(self, stdscr, coords, current_player, block_colors):
-
-        for i, coord in enumerate(coords):
-            y, x = coord
-            if i == 1 or i == 4:
-                stdscr.addch(y, x, current_player, block_colors[current_player])
-            else:
-                stdscr.addch(y, x, ' ', block_colors[current_player])
-        stdscr.refresh()
 
     def block_completed(self, stdscr, coord, horizontal=False, vertical=False):
         height, width = stdscr.getmaxyx()
@@ -135,19 +126,21 @@ class Grid:
         height, width = stdscr.getmaxyx()
 
         min_x = (width // 2) - len(self.grid[0])
-        max_x = min_x + len(self.grid[0]) * 2
-
         min_y = height // 2 - len(self.grid) // 2
+        max_x = min_x + len(self.grid[0]) * 2
         max_y = min_y + len(self.grid)
 
         stdscr.clear()
 
+<<<<<<< HEAD
         # game_title = "L O R D  O F  T H E  G R I D"
         # title_y = max(0, height // 2 - len(self.grid) // 2 - 5)
         # title_x = width // 2 - len(game_title) // 2
         # stdscr.addstr(title_y, title_x, "L O R D  O F  T H E  G R I D")
 
 >>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
+=======
+>>>>>>> c3a8d74 (updated layout)
         for i, row in enumerate(self.grid):
             y = height // 2 - len(self.grid) // 2 + (i - 1)
             for j, cell in enumerate(row):
@@ -225,6 +218,7 @@ class Grid:
 
         curses.curs_set(0)
         return unicode_to_ascii[grid_size]
+<<<<<<< HEAD
 
     def connect_horizontal(self, stdscr, left_coord, right_coord):
         y = left_coord[0]
@@ -238,3 +232,5 @@ class Grid:
         stdscr.addch(row, col, "|")
         stdscr.refresh()
 >>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
+=======
+>>>>>>> c3a8d74 (updated layout)

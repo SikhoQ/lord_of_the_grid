@@ -54,7 +54,8 @@ class Player:
         curses.napms(850)
 
         player = 2 if player == 1 else 1
-        alphas = alphas.replace(player_initial, "")
+        alphas = alphas.replace(player_initial.lower(), "")
+        alphas = alphas.replace(player_initial.upper(), "")
 
         curses.curs_set(0)
         return player_initial.upper(), alphas

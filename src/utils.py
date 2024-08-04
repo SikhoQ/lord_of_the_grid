@@ -44,7 +44,7 @@ def print_menu(stdscr, menu, selected):
         stdscr.refresh()
 
 
-def scores(stdscr, total_blocks, player_1, player_2):
+def calculate_scores(stdscr, total_blocks, player_1, player_2):
     top_left, bottom_right = game_grid.Grid.corners
     y1, x1 = top_left
     y2, x2 = bottom_right
@@ -67,64 +67,71 @@ def scores(stdscr, total_blocks, player_1, player_2):
     return total_blocks == player_1_score + player_2_score, player_1_score, player_2_score
 
 
-def print_gameplay_details(stdscr, total_blocks, current_player, player_1, player_2):
+def print_score_card(stdscr, total_blocks, current_player, player_1, player_2):
     height, width = stdscr.getmaxyx()
 
     grid_max_x = game_grid.Grid.corners[1][1]
     grid_min_y = game_grid.Grid.corners[0][0]
 
+    message_colour = None
+
     line1 = f"NOW PLAYING: {current_player}"
-    line2 = "SCORE"
+    line2 = "SCORE:"
     line3 = f"{list(player_1.items())[0][0]}: {list(player_1.items())[0][1]}/{total_blocks}"
     line4 = f"{list(player_2.items())[0][0]}: {list(player_2.items())[0][1]}/{total_blocks}"
     lines = [line1, line2, line3, line4]
 
-    start_y = height // 2 - len(lines) // 2
-    start_x = grid_max_x + 1 + len(line1) // 2
+    start_y = height // 2 - len(lines) // 2 - 1
+    start_x = grid_max_x + len(line1) // 2 - 2
 
     stdscr.attron(curses.A_BOLD)
 
     print_border(stdscr, start_y, start_x - 1)
 
-    # stdscr.addstr(height // 2, game_grid.Grid.corners[0][1] - 17, "NOW PLAYING:", WHITE_MAGENTA)
-    # stdscr.addstr(height // 2 + 1, game_grid.Grid.corners[0][1] - 11, current_player, WHITE_MAGENTA)
-
     for i, line in enumerate(lines):
-        color = colours.Colours.WHITE_BLUE
+        message_colour = colours.Colours.WHITE_BLUE
         if i > 0:
             i += 1
         else:
-            color = colours.Colours.WHITE_MAGENTA
-        stdscr.addstr(start_y + i, start_x, line, color)
+            message_colour = colours.Colours.BLACK_CYAN
+        stdscr.addstr(start_y + i, start_x, line, message_colour)
 
     if total_blocks == list(player_1.items())[0][1] + list(player_2.items())[0][1]:
         if list(player_1.items())[0][1] == list(player_2.items())[0][1]:
             message = "IT'S A TIE!"
-        elif list(player_1.items())[0][1] > list(player_2.items())[0][1]:
-            message = f"{list(player_1.items())[0][0]} WINS!"
+            stdscr.addstr(grid_min_y // 2, width // 2 - len(message) // 2 - 1, message, colours.Colours.YELLOW_BLACK)
         else:
-            message = f"{list(player_2.items())[0][0]} WINS!"
+            if list(player_1.items())[0][1] > list(player_2.items())[0][1]:
+                message = list(player_1.items())[0][0]
+                message_colour = colours.block_colors[list(player_1.items())[0][0]]
+            else:
+                message = list(player_2.items())[0][0]
+                message_colour = colours.block_colors[list(player_2.items())[0][0]]
+            stdscr.addch(grid_min_y // 2, width // 2 - len(message) // 2 - 1, message, message_colour)
+            stdscr.addstr(grid_min_y // 2, width // 2 - len(message) // 2, " WINS!")
 
-        stdscr.addstr(grid_min_y // 2, width // 2 - len(message) // 2, message)
-        stdscr.addstr(grid_min_y // 2 + 2, width // 2 - 12, "PRESS ANY KEY TO CONTINUE")
+        stdscr.addstr(grid_min_y // 2 + 2, width // 2 - 13, "PRESS ANY KEY TO CONTINUE")
         key = stdscr.getch()
 
         # do nothing if mouse is clicked
         if key == curses.KEY_MOUSE:
-            print_gameplay_details(stdscr, total_blocks, current_player, player_1, player_2)
-
+            print_score_card(stdscr, total_blocks, current_player, player_1, player_2)
     stdscr.refresh()
 
 
 def print_border(stdscr, start_y, start_x):
-    stdscr.addstr(start_y - 1, start_x, "-" * 16)
-    stdscr.addstr(start_y + 1, start_x, "-" * 16)
-    stdscr.addstr(start_y + 5, start_x, "-" * 16)
+    horizontal = "="
+    vertical = "|"
+
+    stdscr.addstr(start_y - 1, start_x, horizontal * 16, colours.Colours.CYAN_BLACK)
+    stdscr.addstr(start_y + 1, start_x, "-" * 16, colours.Colours.CYAN_BLACK)
+    stdscr.addstr(start_y + 5, start_x, horizontal * 16, colours.Colours.CYAN_BLACK)
+
     for i in range(5):
         if i == 1:
             continue
-        stdscr.addch(start_y + i, start_x, "|")
-        stdscr.addch(start_y + i, start_x + 15, "|")
+        stdscr.addch(start_y + i, start_x, vertical, colours.Colours.CYAN_BLACK)
+        stdscr.addch(start_y + i, start_x + 15, vertical, colours.Colours.CYAN_BLACK)
     stdscr.refresh()
 
 
@@ -134,12 +141,12 @@ def check_valid_horizontal(stdscr, row, col):
     right_coord = tuple()
 
     min_x = max(1, col - 3)
-    # max x is row + 3
-    max_x = min(col + 3, width - 2)
+    # max x is col + 3
+    max_x = min(col + 3, width - 6)
     # iterate from min to max
     for x in range(min_x, max_x + 1):
         first_dot = chr(stdscr.inch(row, x) & 0xFF)
-        if first_dot == '+':
+        if first_dot == '+' and (x + 4) <= (min_x + 7):
             left_coord = (row, x)
             second_dot = chr(stdscr.inch(row, x + 4) & 0xFF)
             if second_dot == '+' and "   " == \
@@ -163,3 +170,27 @@ def check_valid_vertical(stdscr, row, col):
     if top_char == bottom_char == '+' and mid_char == " ":
         return True, (min_y, col), (max_y, col)
     return False, None, None
+
+
+def do_block_sign(stdscr, coords, current_player):
+    for i, coord in enumerate(coords):
+        y, x = coord
+        if i == 1 or i == 4:
+            stdscr.addch(y, x, current_player, colours.block_colors[current_player])
+        else:
+            stdscr.addch(y, x, ' ', colours.block_colors[current_player])
+    stdscr.refresh()
+
+
+def connect_horizontal(stdscr, left_coord, right_coord):
+    y = left_coord[0]
+    min_x, max_x = left_coord[1], right_coord[1]
+
+    for x in range(min_x + 1, max_x):
+        stdscr.addstr(y, x, "-")
+    stdscr.refresh()
+
+
+def connect_vertical(stdscr, row, col):
+    stdscr.addch(row, col, "|")
+    stdscr.refresh()

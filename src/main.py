@@ -43,6 +43,7 @@ import game
 def main(stdscr):
     curses.curs_set(0)
     curses.echo()
+
     curses.mousemask(curses.ALL_MOUSE_EVENTS)
 
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_YELLOW)
@@ -50,6 +51,9 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
     curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(7, curses.COLOR_CYAN, curses.COLOR_MAGENTA)
+    curses.init_pair(8, curses.COLOR_BLACK, curses.COLOR_CYAN)
 
     stdscr.clear()
     stdscr.attron(curses.A_BOLD)
