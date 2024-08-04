@@ -3,7 +3,13 @@ import curses
 
 
 class Grid:
+<<<<<<< HEAD
     def __init__(self, size, stdscr):
+=======
+    corners = tuple()
+
+    def __init__(self, size):
+>>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
         self.size = size
         self.grid = self.create_grid()
         self.direction = ""
@@ -43,151 +49,109 @@ class Grid:
 
         return grid
 
-    def already_played(self, play):
-        row_1, col_1, row_2, col_2 = self.get_coordinates(play)
+    def do_block_sign(self, stdscr, coords, current_player, block_colors):
 
-        if (row_1 == row_2):
-            return self.grid[row_1][min([col_1, col_2]) + 1] == "-"
-        return self.grid[min(row_1, row_2) + 1][col_1] == "|"
-
-    def update_grid(self, play):
-        row_1, col_1, row_2, col_2 = self.get_coordinates(play)
-        if row_1 == row_2:  # horizontal play
-            self.grid[row_1][min([col_1, col_2]) + 1] = "-"  # find space to replace by adding 1 to the smaller column
-            if col_1 > col_2:  # play direction : RIGHT
-                self.direction = "LEFT"
+        for i, coord in enumerate(coords):
+            y, x = coord
+            if i == 1 or i == 4:
+                stdscr.addch(y, x, current_player, block_colors[current_player])
             else:
-                self.direction = "RIGHT"
-        else:
-            self.grid[min([row_1, row_2]) + 1][col_1] = "|"
+                stdscr.addch(y, x, ' ', block_colors[current_player])
+        stdscr.refresh()
 
-            if row_1 > row_2:  # play direction: UP
-                self.direction = "UP"
-            else:
-                self.direction = "DOWN"
-
-    def do_block_sign(self, player):
-        self.grid[self.sign_block[0]][self.sign_block[1]] = player.name  # just put the player's initial in the completed block
-
-        if len(self.sign_block) == 4:
-            self.grid[self.sign_block[2]][self.sign_block[3]] = player.name  # sign_block has length 4 when single play completes 2 blocks, in which case sign both blocks
-
-    def check_block_completed(self, play):
-        row_1, col_1, row_2, col_2 = self.get_coordinates(play)
-
+    def block_completed(self, stdscr, coord, horizontal=False, vertical=False):
+        height, width = stdscr.getmaxyx()
+        y, x = coord
         self.sign_block = list()
 
-        if self.direction == "UP":
-            if play[1] != "1" and play[1] != str(self.size):  # if the played vertical line is not along the edges
-                if self.grid[row_2][col_2 - 1] == "-" and self.grid[row_2 + 1][col_2 - 2] == "|" and self.grid[row_1][col_1 - 1] == "-"\
-                   and self.grid[row_2][col_2 + 1] == "-" and self.grid[row_2 + 1][col_2 + 2] == "|" and self.grid[row_1][col_1 + 1] == "-":  # if play completes 2 blocks, either side of line
-                    self.sign_block.extend([row_1 - 1, col_1 + 1, row_1 - 1, col_1 - 1])
+        # VERITCAL
+        # ========
+        if vertical:
+            # if the played vertical line is not along left or right edges
+            if x >= 5 and x <= width - 6:
+                # if on the left of vertical line
+                if chr(stdscr.inch(y, x - 4) & 0xFF) == '|' and\
+                 "---" == ''.join([chr(stdscr.inch(y - 1, col) & 0xFF) for col in range(x - 3, x)]) and\
+                 "---" == ''.join([chr(stdscr.inch(y + 1, col) & 0xFF) for col in range(x - 3, x)]):
+                    self.sign_block.extend([(y, col) for col in range(x - 3, x)])
 
-                elif self.grid[row_2][col_2 - 1] == "-" and self.grid[row_2 + 1][col_2 - 2] == "|" and self.grid[row_1][col_1 - 1] == "-":  # on the left of vertical line
-                    self.sign_block.extend([row_1 - 1, col_1 - 1])
+                # if on the right of vertical line
+                if chr(stdscr.inch(y, x + 4) & 0xFF) == '|' and\
+                   "---" == ''.join([chr(stdscr.inch(y - 1, col) & 0xFF) for col in range(x + 1, x + 4)]) and\
+                   "---" == ''.join([chr(stdscr.inch(y + 1, col) & 0xFF) for col in range(x + 1, x + 4)]):
+                    self.sign_block.extend([(y, col) for col in range(x + 1, x + 4)])
 
-                elif self.grid[row_2][col_2 + 1] == "-" and self.grid[row_2 + 1][col_2 + 2] == "|" and self.grid[row_1][col_1 + 1] == "-":  # on the right of vertical line
-                    self.sign_block.extend([row_1 - 1, col_1 + 1])
+            # else if played vertical line is along left edge
+            elif x == 1:
+                if chr(stdscr.inch(y, 5) & 0xFF) == '|' and\
+                 "---" == ''.join([chr(stdscr.inch(y - 1, col) & 0xFF) for col in range(2, 5)]) and\
+                 "---" == ''.join([chr(stdscr.inch(y + 1, col) & 0xFF) for col in range(2, 5)]):
+                    self.sign_block.extend([(y, col) for col in range(2, 5)])
 
-            elif play[1] == "1":  # played vertical line is along left edge
-                if self.grid[row_2][col_2 + 1] == "-" and self.grid[row_2 + 1][col_2 + 2] == "|" and self.grid[row_1][col_1 + 1] == "-":
-                    self.sign_block.extend([row_1 - 1, col_1 + 1])
+            # else played vertical line is along right edge
+            elif x == width - 2:
+                if chr(stdscr.inch(y, width - 6) & 0xFF) == '|' and\
+                 "---" == ''.join([chr(stdscr.inch(y - 1, col) & 0xFF) for col in range(width - 5, width - 2)]) and\
+                 "---" == ''.join([chr(stdscr.inch(y + 1, col) & 0xFF) for col in range(width - 5, width - 2)]):
+                    self.sign_block.extend([(y, col) for col in range(width - 5, width - 2)])
 
-            else:  # played vertical line is along right edge
-                if self.grid[row_2][col_2 - 1] == "-" and self.grid[row_2 + 1][col_2 - 2] == "|" and self.grid[row_1][col_1 - 1] == "-":  # on the left of vertical line
-                    self.sign_block.extend([row_1 - 1, col_1 - 1])
+        # HORIZONTAL
+        # ==========
+        elif horizontal:
 
-        elif self.direction == "DOWN":
-            if play[1] != "1" and play[1] != str(self.size):  # if the played vertical line is not along the edges
-                if self.grid[row_2][col_2 - 1] == "-" and self.grid[row_2 - 1][col_2 - 2] == "|" and self.grid[row_1][col_1 - 1] == "-"\
-                   and self.grid[row_2][col_2 + 1] == "-" and self.grid[row_2 - 1][col_2 + 2] == "|" and self.grid[row_1][col_1 + 1] == "-":  # if play completes 2 blocks, either side of line
-                    self.sign_block.extend([row_2 - 1, col_2 - 1, row_2 - 1, col_2 + 1])
+            # if played horizontal line is not along top or bottom edge
+            if y >= 3 and y <= height - 4:
+                # if above horizontal line
+                if chr(stdscr.inch(y - 1, x - 2) & 0xFF) == '|' and\
+                 chr(stdscr.inch(y - 1, x + 2) & 0xFF) == '|' and\
+                 "---" == ''.join([chr(stdscr.inch(y - 2, col) & 0xFF) for col in range(x - 1, x + 2)]):
+                    self.sign_block.extend([(y - 1, col) for col in range(x - 1, x + 2)])
+                # if below horizontal line
+                if chr(stdscr.inch(y + 1, x - 2) & 0xFF) == '|' and\
+                    chr(stdscr.inch(y + 1, x + 2) & 0xFF) == '|' and\
+                        "---" == ''.join([chr(stdscr.inch(y + 2, col) & 0xFF) for col in range(x - 1, x + 2)]):
+                    self.sign_block.extend([(y + 1, col) for col in range(x - 1, x + 2)])
 
-                elif self.grid[row_2][col_2 - 1] == "-" and self.grid[row_2 - 1][col_2 - 2] == "|" and self.grid[row_1][col_1 - 1] == "-":  # on left of line
-                    self.sign_block.extend([row_2 - 1, col_2 - 1])
+            # else if played horizontal line is on top edge
+            elif y == 1:
+                if chr(stdscr.inch(y + 1, x - 2) & 0xFF) == '|' and\
+                 chr(stdscr.inch(y + 1, x + 2) & 0xFF) == '|' and\
+                 "---" == ''.join([chr(stdscr.inch(y + 2, col) & 0xFF) for col in range(x - 1, x + 2)]):
+                    self.sign_block.extend([(y + 1, col) for col in range(x - 1, x + 2)])
+            # else played horizontal line is on bottom edge
+            elif y == height - 2:
+                if chr(stdscr.inch(y - 1, x - 2) & 0xFF) == '|' and\
+                 chr(stdscr.inch(y - 1, x + 2) & 0xFF) == '|' and\
+                 "---" == ''.join([chr(stdscr.inch(y - 2, col) & 0xFF) for col in range(x - 1,  x + 2)]):
+                    self.sign_block.extend([(y - 1, col) for col in range(x - 1, x + 2)])
 
-                elif self.grid[row_2][col_2 + 1] == "-" and self.grid[row_2 - 1][col_2 + 2] == "|" and self.grid[row_1][col_1 + 1] == "-":  # on right of line
-                    self.sign_block.extend([row_2 - 1, col_2 + 1])
+        return len(self.sign_block) != 0, self.sign_block  # True if our list of co-ords is no longer empty (i.e. a completed block was found)
 
-            elif play[1] == "1":  # played vertical line is along left edge
-                if self.grid[row_2][col_2 + 1] == "-" and self.grid[row_2 - 1][col_2 + 2] == "|" and self.grid[row_1][col_1 + 1] == "-":
-                    self.sign_block.extend([row_2 - 1, col_2 + 1])
-
-            else:  # line is along right edge
-                if self.grid[row_2][col_2 - 1] == "-" and self.grid[row_2 - 1][col_2 - 2] == "|" and self.grid[row_1][col_1 - 1] == "-":  # on left of line
-                    self.sign_block.extend([row_2 - 1, col_2 - 1])
-
-        elif self.direction == "RIGHT":
-            if play[0] != "A" and play[0] != self.alphas[self.size - 1]:  # if played horizontal line is not along top or bottom edge
-                if self.grid[row_2 - 1][col_2] == "|" and self.grid[row_2 - 2][col_2 - 1] == "-" and self.grid[row_1 - 1][col_1] == "|"\
-                   and self.grid[row_2 + 1][col_2] == "|" and self.grid[row_2 + 2][col_2 - 1] == "-" and self.grid[row_2 + 1][col_2 - 2] == "|":  # if play completes 2 blocks, on either side
-                    self.sign_block.extend([row_2 - 1, col_2 - 1, row_2 + 1, col_2 - 1])
-
-                elif self.grid[row_2 - 1][col_2] == "|" and self.grid[row_2 - 2][col_2 - 1] == "-" and self.grid[row_1 - 1][col_1] == "|":  # above line
-                    self.sign_block.extend([row_2 - 1, col_2 - 1])
-
-                elif self.grid[row_2 + 1][col_2] == "|" and self.grid[row_2 + 2][col_2 - 1] == "-" and self.grid[row_2 + 1][col_2 - 2] == "|":  # below line
-                    self.sign_block.extend([row_2 + 1, col_2 - 1])
-
-            elif play[0] == "A":  # along top edge
-                if self.grid[row_2 + 1][col_2] == "|" and self.grid[row_2 + 2][col_2 - 1] == "-" and self.grid[row_2 + 1][col_2 - 2] == "|":  # below line
-                    self.sign_block.extend([row_2 + 1, col_2 - 1])
-
-            else:  # along bottom edge
-                if self.grid[row_2 - 1][col_2] == "|" and self.grid[row_2 - 2][col_2 - 1] == "-" and self.grid[row_1 - 1][col_1] == "|":  # above line
-                    self.sign_block.extend([row_2 - 1, col_2 - 1])
-
-        elif self.direction == "LEFT":  # obviously, direction: left
-            if play[0] != "A" and play[0] != self.alphas[self.size - 1]:  # if played horizontal line is not along top or bottom edge
-                if self.grid[row_2 + 1][col_2] == "|" and self.grid[row_2 + 2][col_2 + 1] == "-" and self.grid[row_2 + 1][col_2 + 2] == "|"\
-                   and self.grid[row_2 - 1][col_2] == "|" and self.grid[row_2 - 2][col_2 + 1] == "-" and self.grid[row_2 - 1][col_2 + 2] == "|":  # if current play completes 2 blocks
-                    self.sign_block.extend([row_2 + 1, col_2 + 1, row_2 - 1, col_2 + 1])
-
-                elif self.grid[row_2 + 1][col_2] == "|" and self.grid[row_2 + 2][col_2 + 1] == "-" and self.grid[row_2 + 1][col_2 + 2] == "|":  # below line
-                    self.sign_block.extend([row_2 + 1, col_2 + 1])
-
-                elif self.grid[row_2 - 1][col_2] == "|" and self.grid[row_2 - 2][col_2 + 1] == "-" and self.grid[row_2 - 1][col_2 + 2] == "|":  # above line
-                    self.sign_block.extend([row_2 - 1, col_2 + 1])
-
-            elif play[0] == "A":  # along top edge
-                if self.grid[row_2 + 1][col_2] == "|" and self.grid[row_2 + 2][col_2 + 1] == "-" and self.grid[row_2 + 1][col_2 + 2] == "|":  # below line
-                    self.sign_block.extend([row_2 + 1, col_2 + 1])
-
-            else:  # along bottom edge
-                if self.grid[row_2 - 1][col_2] == "|" and self.grid[row_2 - 2][col_2 + 1] == "-" and self.grid[row_2 - 1][col_2 + 2] == "|":  # above line
-                    self.sign_block.extend([row_2 - 1, col_2 + 1])
-
-        return len(self.sign_block) != 0  # True if our list of co-ords is no longer empty (i.e. a completed block was found)
-
-    def get_coordinates(self, play):
-        row_1 = 2 * self.alphas.index(play[0])
-        col_1 = 2 * (int(play[1]) - 1)
-        row_2 = 2 * self.alphas.index(play[3])
-        col_2 = 2 * (int(play[4]) - 1)
-        return row_1, col_1, row_2, col_2
-
-    def print_grid(self):
-        print("\n\n" + " "*7, end="")  # print spaces before the 1
-        for i in range(1, self.size + 1):  # printing column labels
-            print(i, end=" "*5)
-
-        print("\n\n")
-
-        i = 0
-        for this_line in self.grid:
-            if "+" in this_line:
-                print(f"{self.alphas[i]}", end=" "*6)
-                i += 1
-            else:
-                print(" "*7, end="")
-            for item in this_line:
-                print(item, end=" "*2)
-            print()
-
+<<<<<<< HEAD
     def draw(self):
         # Draw the grid
+=======
+    def draw(self, stdscr):
+        height, width = stdscr.getmaxyx()
+
+        min_x = (width // 2) - len(self.grid[0])
+        max_x = min_x + len(self.grid[0]) * 2
+
+        min_y = height // 2 - len(self.grid) // 2
+        max_y = min_y + len(self.grid)
+
+        stdscr.clear()
+
+        # game_title = "L O R D  O F  T H E  G R I D"
+        # title_y = max(0, height // 2 - len(self.grid) // 2 - 5)
+        # title_x = width // 2 - len(game_title) // 2
+        # stdscr.addstr(title_y, title_x, "L O R D  O F  T H E  G R I D")
+
+>>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
         for i, row in enumerate(self.grid):
+            y = height // 2 - len(self.grid) // 2 + (i - 1)
             for j, cell in enumerate(row):
+<<<<<<< HEAD
                 self.stdscr.addch(self.start_row + i,
                                   self.start_col + j * 2, cell)
 
@@ -223,3 +187,54 @@ class Grid:
                 self.stdscr.addstr(row, col, "|")
 
             self.stdscr.refresh()
+=======
+                x = (width // 2) - len(row) + j
+                stdscr.addch(y, j + x, cell)
+        stdscr.refresh()
+
+        Grid.corners = (min_y, min_x), (max_y, max_x)
+
+    @staticmethod
+    def get_grid_size(stdscr):
+        curses.curs_set(1)
+        prompt = "Enter grid size (2 - 9): "
+
+        stdscr.clear()
+
+        height, width = stdscr.getmaxyx()
+        x = width // 2 - len(prompt) // 2
+        y = height // 2
+
+        stdscr.addstr(y, x, prompt)
+        stdscr.refresh()
+
+        grid_size = stdscr.getch()
+
+        if grid_size not in range(50, 58):
+            message = "Invalid grid size"
+            x = width // 2 - len(message) // 2
+            stdscr.clear()
+            stdscr.addstr(y, x, message)
+            stdscr.refresh()
+            curses.napms(1600)
+
+            return Grid.get_grid_size(stdscr)
+        curses.napms(650)
+
+        unicode_to_ascii = {key: key - 48 for key in range(50, 58)}
+
+        curses.curs_set(0)
+        return unicode_to_ascii[grid_size]
+
+    def connect_horizontal(self, stdscr, left_coord, right_coord):
+        y = left_coord[0]
+        min_x, max_x = left_coord[1], right_coord[1]
+
+        for x in range(min_x + 1, max_x):
+            stdscr.addstr(y, x, "-")
+        stdscr.refresh()
+
+    def connect_vertical(self, stdscr, row, col):
+        stdscr.addch(row, col, "|")
+        stdscr.refresh()
+>>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)

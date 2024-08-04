@@ -1,5 +1,10 @@
-.venv/
+venv/
 reminder.txt
 temp.py
+<<<<<<< HEAD
 curses_simple_example.py
 curses_simple_example2.py
+=======
+TODO.txt
+curses_simple_example.py
+>>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)

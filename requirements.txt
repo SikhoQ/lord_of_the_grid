@@ -1,4 +1,1 @@
-inquirerpy==0.3.4
-pfzy==0.3.4
-prompt_toolkit==3.0.47
-wcwidth==0.2.13
+windows-curses @ file:///C:/Users/user/Desktop/Programming/Python/Python%20Packages/windows_curses-2.3.3-cp312-cp312-win_amd64.whl#sha256=eaea51f169d9940a9bad1edda1759f63795daeb2174b2a45c895148058970689
