@@ -1,6 +1,6 @@
 import curses
 
-block_colors = dict()
+player_colours = dict()
 
 
 class Colours:
@@ -15,9 +15,16 @@ class Colours:
     CYAN_BLACK = curses.color_pair(6)
     CYAN_MAGENTA = curses.color_pair(7)
     BLACK_CYAN = curses.color_pair(8)
+    WHITE_GREEN = curses.color_pair(9)
+    BLACK_GREEN = curses.color_pair(10)
+    CYAN_CYAN = curses.color_pair(11)
+    BLACK_WHITE = curses.color_pair(12)
+    RED_BLACK = curses.color_pair(13)
+    GREEN_BLACK = curses.color_pair(14)
+    BLACK_RED = curses.color_pair(15)
 
     def __init__(self, player_1, player_2):
-        global block_colors
+        global player_colours
 
-        block_colors = {player_1: Colours.BLACK_YELLOW,
-                        player_2: Colours.WHITE_BLUE}
+        player_colours = {player_1: Colours.BLACK_YELLOW,
+                          player_2: Colours.WHITE_BLUE}

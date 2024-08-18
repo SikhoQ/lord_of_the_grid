@@ -54,13 +54,20 @@ def main(stdscr):
     curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(7, curses.COLOR_CYAN, curses.COLOR_MAGENTA)
     curses.init_pair(8, curses.COLOR_BLACK, curses.COLOR_CYAN)
+    curses.init_pair(9, curses.COLOR_WHITE, curses.COLOR_GREEN)
+    curses.init_pair(10, curses.COLOR_BLACK, curses.COLOR_GREEN)
+    curses.init_pair(11, curses.COLOR_CYAN, curses.COLOR_CYAN)
+    curses.init_pair(12, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    curses.init_pair(13, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(14, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(15, curses.COLOR_BLACK, curses.COLOR_RED)
 
     stdscr.clear()
     stdscr.attron(curses.A_BOLD)
 
     current_row = 0
     menu = ["Play Game", "How to Play", "Exit"]
-    do_menu_selection = {0: game.play_game, 1: utils.print_help,
+    do_menu_selection = {0: game.get_players_and_size, 1: utils.print_help,
                          2: game.do_exit_game}
 
     while True:
@@ -85,6 +92,9 @@ def main(stdscr):
 
 if __name__ == "__main__":
     curses.wrapper(main)
+<<<<<<< HEAD
 
 # TODO: fix spacing between grid and prints and make it pretty overall
 >>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
+=======
+>>>>>>> b9fbcd5 (various fixes and improvements)

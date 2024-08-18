@@ -31,6 +31,7 @@ game_over = False
 
 >>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
 
+<<<<<<< HEAD
 def play_game(stdscr):
     global game_over
 
@@ -86,6 +87,9 @@ if __name__ == "__main__":
     stdscr.clear()
 
     height, width = stdscr.getmaxyx()
+=======
+def get_players_and_size(stdscr):
+>>>>>>> b9fbcd5 (various fixes and improvements)
     # prompt grid size
     grid_size = game_grid.Grid.get_grid_size(stdscr)
 
@@ -94,9 +98,18 @@ if __name__ == "__main__":
     player_1, alphas = player.Player.get_player_initial(stdscr, alphas)
     # prompt player 2 initial
     player_2, alphas = player.Player.get_player_initial(stdscr, alphas)
+    play_game(stdscr, player_1, player_2, grid_size)
+
+
+def play_game(stdscr, player_1, player_2, grid_size):
+    global game_over
+
+    stdscr.clear()
+    height, width = stdscr.getmaxyx()
 
     curses.noecho()
 
+    # initialize block colours
     colours.Colours(player_1, player_2)
 
     current_player = player_1
@@ -119,17 +132,19 @@ if __name__ == "__main__":
         completed_block = False
 
         key = stdscr.getch()
-        if key in [ord('q'), ord('Q')]:
-            do_exit_game(stdscr)
+
         if key == curses.KEY_MOUSE:
             mid_coord = tuple()
 
-            _, mx, my, _, _ = curses.getmouse()
-            row, col = my, mx
+            _, col, row, _, _ = curses.getmouse()
 
-            ####################
-            stdscr.addstr(1, 0, f"clicked at (  {mx},   {my})")
-            ####################
+            if col in range(utils.options_coords[1], utils.options_coords[1] + 7):
+                if row == utils.options_coords[0]:
+                    if restart_game(stdscr):
+                        play_game(stdscr, player_1, player_2, grid_size)
+                elif row == utils.options_coords[0] + 1:
+                    if exit_current_game(stdscr):
+                        return
 
             mid_char = chr(stdscr.inch(row, col) & 0xFF)
 
@@ -154,23 +169,78 @@ if __name__ == "__main__":
                     if completed_block:
                         utils.do_block_sign(stdscr, sign_coords, current_player)
                         game_over, player_1_score, player_2_score = utils.calculate_scores(stdscr, total_blocks, player_1, player_2)
-                ###############################################
-                stdscr.addstr(0, 0, str(completed_block) + " ")
-                ###############################################
+
                 if not completed_block and (valid_horizontal or valid_vertical):
                     current_player, next_player = next_player, current_player
 
         utils.print_score_card(stdscr, total_blocks, current_player, {player_1: player_1_score}, {player_2: player_2_score})
 
         stdscr.refresh()
-    # play_game(stdscr)
+
+
+def restart_game(stdscr):
+    y, x = utils.bottom_space_coords
+    stdscr.addstr(y, x + 9, "YES", colours.Colours.BLACK_GREEN)
+    stdscr.addstr(y, x + 13, "NO", colours.Colours.BLACK_RED)
+
+    stdscr.nodelay(True)
+
+    while True:
+        stdscr.addstr(y, x, "RESTART?", colours.Colours.BLACK_CYAN)
+        stdscr.refresh()
+        curses.napms(500)
+        stdscr.addstr(y, x, "RESTART?", colours.Colours.CYAN_BLACK)
+        stdscr.refresh()
+        curses.napms(500)
+
+        key = stdscr.getch()
+        if key == curses.KEY_MOUSE:
+            _, col, row, _, _ = curses.getmouse()
+            if row == y:
+                if col in range(x + 9, x + 12):
+                    stdscr.nodelay(False)
+                    return True
+                if col in range(x + 13, x + 15):
+                    stdscr.addstr(y, x, " " * 15)
+                    stdscr.refresh()
+                    stdscr.nodelay(False)
+                    return False
+
+
+def exit_current_game(stdscr):
+    y, x = utils.bottom_space_coords
+    stdscr.addstr(y, x + 8, "YES", colours.Colours.BLACK_GREEN)
+    stdscr.addstr(y, x + 13, "NO", colours.Colours.BLACK_RED)
+
+    stdscr.nodelay(True)
+
+    while True:
+        stdscr.addstr(y, x + 1, "EXIT?", colours.Colours.BLACK_CYAN)
+        stdscr.refresh()
+        curses.napms(500)
+        stdscr.addstr(y, x + 1, "EXIT?", colours.Colours.CYAN_BLACK)
+        stdscr.refresh()
+        curses.napms(500)
+
+        key = stdscr.getch()
+        if key == curses.KEY_MOUSE:
+            _, col, row, _, _ = curses.getmouse()
+            if row == y:
+                if col in range(x + 8, x + 11):
+                    stdscr.nodelay(False)
+                    return True
+                if col in range(x + 13, x + 15):
+                    stdscr.addstr(y, x, " " * 15)
+                    stdscr.refresh()
+                    stdscr.nodelay(False)
+                    return False
 
 
 def do_exit_game(stdscr):
     stdscr.clear()
     stdscr.refresh()
 
-    menu = ["Quit game?", "Yes", "No"]
+    menu = ["Exit game?", "Yes", "No"]
     current_row = 1
 
     while True:
@@ -186,6 +256,7 @@ def do_exit_game(stdscr):
             if current_row == 1:
                 exit_game(stdscr)
             else:
+                stdscr.clear()
                 break
 
 
@@ -193,7 +264,7 @@ def exit_game(stdscr):
     stdscr.clear()
     stdscr.refresh()
 
-    message = "Quitting..."
+    message = "Please wait..."
 
     height, width = stdscr.getmaxyx()
     x = width // 2 - len(message) // 2
