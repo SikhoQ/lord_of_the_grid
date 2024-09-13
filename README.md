@@ -32,7 +32,8 @@ A command-line implementation of the classic Dots and Boxes game. The game allow
 To start the game, run:
 
 ```sh
-python main.py
+python3 src/main.py (MacOs/Linunx)
+python3 src\\main.py (Windows)
 ```
 
 ## Game Rules
@@ -82,14 +83,6 @@ Deals with input validation and processing.
 ### `lord-of-the-grid/utils.py`
 
 Contains utility functions, such as calculating scores and checking if the game has ended.
-
-## Running Tests
-
-To run the tests, use:
-
-```sh
-python -m unittest discover tests
-```
 
 ## Contributing
 
