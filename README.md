@@ -89,10 +89,4 @@ Contributions are welcome! Please follow these steps to contribute:
 4. Push the branch to your fork.
 5. Open a pull request with a detailed description of your changes.
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
----
-
 Enjoy playing Lord of the Grid! If you encounter any issues or have suggestions, feel free to open an issue on GitLab.
