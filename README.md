@@ -33,7 +33,7 @@ To start the game, run:
 
 ```sh
 python3 src/main.py (MacOs/Linunx)
-python3 src\\main.py (Windows)
+python3 src\main.py (Windows)
 ```
 
 ## Game Rules
