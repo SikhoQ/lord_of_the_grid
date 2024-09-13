@@ -93,7 +93,7 @@ def print_score_card(stdscr, total_blocks, current_player, player_1, player_2):
     max_score_length = print_scores(stdscr, (start_y, start_x),
                                     (player_1, player_2), total_blocks)
 
-    print_in_game_options(stdscr, start_y, start_x, max_score_length)
+    print_in_game_options(stdscr, start_y, start_x, max_score_length, colours.Colours.GREEN_BLACK)
 
     print_border(stdscr, start_y, start_x - 1, max_score_length)
 
@@ -115,6 +115,7 @@ def print_score_card(stdscr, total_blocks, current_player, player_1, player_2):
         stdscr.addch(bottom_space_coords[0], bottom_space_coords[1] + 3, "|", colours.Colours.CYAN_BLACK)
         stdscr.addch(bottom_space_coords[0], bottom_space_coords[1] + 12, "|", colours.Colours.CYAN_BLACK)
 
+        print_in_game_options(stdscr, start_y, start_x, max_score_length, colours.Colours.RED_BLACK)
         while True:
             key = stdscr.getch()
             if key == curses.KEY_MOUSE:
@@ -125,15 +126,11 @@ def print_score_card(stdscr, total_blocks, current_player, player_1, player_2):
                     break
             stdscr.addstr(bottom_space_coords[0], bottom_space_coords[1] + 4, "CLICK ME", colours.Colours.GREEN_BLACK)
             stdscr.refresh()
-            curses.napms(400)
+            curses.napms(300)
             stdscr.addstr(bottom_space_coords[0], bottom_space_coords[1] + 4, " " * 8)
             stdscr.refresh()
-            curses.napms(400)
+            curses.napms(300)
 
-
-        # do nothing if mouse is clicked
-        # if key == curses.KEY_MOUSE:
-        #     print_score_card(stdscr, total_blocks, current_player, player_1, player_2)
     stdscr.refresh()
 
 
@@ -166,11 +163,12 @@ def print_scores(stdscr, coords, players, total_blocks):
     return max_score_length
 
 
-def print_in_game_options(stdscr, start_y, start_x, max_score_length):
+def print_in_game_options(stdscr, start_y, start_x, max_score_length, option_colours):
     global options_coords
     stdscr.addstr(start_y + 2, start_x + max_score_length + 1, "OPTIONS:", colours.Colours.BLACK_CYAN | curses.A_UNDERLINE)
-    stdscr.addstr(start_y + 3, start_x + max_score_length + 1, "RESTART", colours.Colours.GREEN_BLACK)
-    stdscr.addstr(start_y + 4, start_x + max_score_length + 1, "EXIT", colours.Colours.GREEN_BLACK)
+    stdscr.addstr(start_y + 3, start_x + max_score_length + 1, "RESTART", option_colours)
+    stdscr.addstr(start_y + 4, start_x + max_score_length + 1, "EXIT", option_colours)
+    stdscr.refresh()
 
     options_coords = (start_y + 3, start_x + max_score_length + 1)
 

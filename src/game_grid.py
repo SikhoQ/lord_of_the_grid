@@ -1,16 +1,11 @@
 import string
 import curses
-import colours
 
 
 class Grid:
-<<<<<<< HEAD
-    def __init__(self, size, stdscr):
-=======
     corners = tuple()
 
-    def __init__(self, size):
->>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
+    def __init__(self, size, stdscr):
         self.size = size
         self.grid = self.create_grid()
         self.direction = ""
@@ -118,10 +113,6 @@ class Grid:
 
         return len(self.sign_block) != 0, self.sign_block  # True if our list of co-ords is no longer empty (i.e. a completed block was found)
 
-<<<<<<< HEAD
-    def draw(self):
-        # Draw the grid
-=======
     def draw(self, stdscr):
         height, width = stdscr.getmaxyx()
 
@@ -132,19 +123,10 @@ class Grid:
 
         stdscr.clear()
 
-<<<<<<< HEAD
-        # game_title = "L O R D  O F  T H E  G R I D"
-        # title_y = max(0, height // 2 - len(self.grid) // 2 - 5)
-        # title_x = width // 2 - len(game_title) // 2
-        # stdscr.addstr(title_y, title_x, "L O R D  O F  T H E  G R I D")
-
->>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
-=======
->>>>>>> c3a8d74 (updated layout)
         for i, row in enumerate(self.grid):
             y = height // 2 - len(self.grid) // 2 + (i - 1)
             for j, cell in enumerate(row):
-<<<<<<< HEAD
+
                 self.stdscr.addch(self.start_row + i,
                                   self.start_col + j * 2, cell)
 
@@ -152,9 +134,9 @@ class Grid:
         cursor_row = self.start_row + self.grid_height + 1
         cursor_col = self.start_col
 
-        self.stdscr.addstr(cursor_row, cursor_col, "Press 'q' to quit")
-
         self.stdscr.refresh()
+        Grid.corners = (min_y, min_x), (max_y, max_x)
+        
 
     def get_mouse_coordinates(self):
         id, x, y, z, bstate = curses.getmouse()
@@ -180,12 +162,6 @@ class Grid:
                 self.stdscr.addstr(row, col, "|")
 
             self.stdscr.refresh()
-=======
-                x = (width // 2) - len(row) + j
-                stdscr.addch(y, j + x, cell)
-        stdscr.refresh()
-
-        Grid.corners = (min_y, min_x), (max_y, max_x)
 
     @staticmethod
     def get_grid_size(stdscr):
@@ -218,7 +194,6 @@ class Grid:
 
         curses.curs_set(0)
         return unicode_to_ascii[grid_size]
-<<<<<<< HEAD
 
     def connect_horizontal(self, stdscr, left_coord, right_coord):
         y = left_coord[0]
@@ -231,6 +206,3 @@ class Grid:
     def connect_vertical(self, stdscr, row, col):
         stdscr.addch(row, col, "|")
         stdscr.refresh()
->>>>>>> 910f7a4 (fixed incorrect scoring and moved gameplay details to single score card)
-=======
->>>>>>> c3a8d74 (updated layout)
