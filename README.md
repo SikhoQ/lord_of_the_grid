@@ -47,20 +47,18 @@ python main.py
 ```
 lord-of-the-grid/
 ├── src/
-│   ├── __init__.py
 │   ├── game.py
 │   ├── game_grid.py
+|   ├── main.py
 │   ├── player.py
 │   ├── input_handler.py
 │   └── utils.py
 ├── tests/
-│   ├── __init__.py
 │   ├── test_game.py
 │   ├── test_game_grid.py
 │   ├── test_player.py
 │   ├── test_input_handler.py
 │   └── test_utils.py
-├── main.py
 ├── requirements.txt
 └── README.md
 ```
