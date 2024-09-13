@@ -29,12 +29,7 @@ A command-line implementation of the classic Dots and Boxes game. The game allow
 
 ## Usage
 
-To start the game, run:
-
-```sh
-python3 src/main.py (MacOs/Linunx)
-python3 src\main.py (Windows)
-```
+To start the game, run main.py inside src
 
 ## Game Rules
 
