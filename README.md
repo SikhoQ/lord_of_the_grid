@@ -17,8 +17,8 @@ A command-line implementation of the classic Dots and Boxes game. The game allow
 1. Clone the repository:
 
    ```sh
-   git clone https://gitlab.wethinkco.de/sqangule023/lord-of-the-grid
-   cd lord-of-the-grid
+   git clone git@github.com:SikhoQ/lord_of_the_grid.git
+   cd lord_of_the_grid
    ```
 
 2. Install the dependencies:
@@ -41,7 +41,7 @@ To start the game, run main.py inside src
 ## Project Structure
 
 ```
-lord-of-the-grid/
+lord_of_the_grid/
 ├── src/
 │   ├── game.py
 │   ├── game_grid.py
@@ -59,23 +59,23 @@ lord-of-the-grid/
 └── README.md
 ```
 
-### `lord-of-the-grid/game.py`
+### `lord_of_the_grid/game.py`
 
 Handles the main game loop and game-related functions.
 
-### `lord-of-the-grid/game_grid.py`
+### `lord_of_the_grid/game_grid.py`
 
 Manages the grid and its operations.
 
-### `lord-of-the-grid/player.py`
+### `lord_of_the_grid/player.py`
 
 Contains player-related logic.
 
-### `lord-of-the-grid/input_handler.py`
+### `lord_of_the_grid/input_handler.py`
 
 Deals with input validation and processing.
 
-### `lord-of-the-grid/utils.py`
+### `lord_of_the_grid/utils.py`
 
 Contains utility functions, such as calculating scores and checking if the game has ended.
 
