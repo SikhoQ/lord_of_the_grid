@@ -89,4 +89,4 @@ Contributions are welcome! Please follow these steps to contribute:
 4. Push the branch to your fork.
 5. Open a pull request with a detailed description of your changes.
 
-Enjoy playing Lord of the Grid! If you encounter any issues or have suggestions, feel free to open an issue on GitLab.
+Enjoy playing Lord of the Grid! If you encounter any issues or have suggestions, feel free to open an issue.
